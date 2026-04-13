@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 25px;
+        }
+
+        /* STICKY GLASS HEADER */
+        header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header h1 {
+            margin-bottom: 5px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        section {
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        /* FLOATING CARD STYLE */
+        .about, .skills, .projects, .contact {
+            background: #fff;
+            margin-bottom: 40px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about::before, .skills::before, .projects::before, .contact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+        }
+
+        .about:hover, .skills:hover, .projects:hover, .contact:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #764ba2;
+            text-align: center;
+            font-size: 1.8rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -8px;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        /* Profile Photo Styling */
+        .profile-photo {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #fff;
+            box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.3), 0 10px 20px rgba(0,0,0,0.2);
+            margin: 10px auto 30px;
+            display: block;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: zoom-in;
+            z-index: 10;
+            position: relative;
+        }
+
+        .profile-photo:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* LIGHTBOX */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            z-index: 999;
+            pointer-events: none;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-overlay.active {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            pointer-events: auto;
+        }
+
+        .profile-photo.enlarged {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(2.5);
+            z-index: 1000;
+            border-radius: 15px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+            cursor: zoom-out;
+            border: 10px solid #fff;
+        }
+
+        .about p {
+            color: #555;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .skills ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            padding: 10px 0;
+        }
+
+        .skills li {
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .skills li:nth-child(odd) {
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        }
+
+        .skills li:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .projects-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .project {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #764ba2;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .project:nth-child(even) {
+            border-left-color: #0072ff;
+        }
+
+        .project:hover {
+            background: #fff;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .project h3 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .project p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .contact a {
+            display: inline-block;
+            margin: 15px 10px 0;
+            padding: 12px 30px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .contact a:nth-child(3) {
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        }
+
+        .contact a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
+        }
+
+        /* Title color from styles.css */
+        .title {
+            color: #5C6AC4;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 600px) {
+            nav a {
+                margin: 0 5px;
+                font-size: 0.85rem;
+            }
+
+            .about, .skills, .projects, .contact {
+                padding: 25px;
+                margin: 20px 10px;
+            }
+
+            .profile-photo.enlarged {
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lightbox-overlay" id="lightboxOverlay"></div>
+
+    <header>
+        <h1>Junren N Abajar</h1>
+        <p>Web Developer | Designer | Programmer</p>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section id="about" class="about">
+        <h2>About Me</h2>
+        <img src="https://z-cdn-media.chatglm.cn/files/0de2c85f-6d06-4084-80e6-3094920eb3f6.jpg?auth_key=1869564559-cf192d42736a46cfb8e00a700f10b779-0-26804ad9315b37acf0a8398416682eb6" alt="Profile Photo" class="profile-photo" id="profileImg" onclick="toggleLightbox()">
+        <p>
+            Hello! I am a passionate web developer who loves creating clean and
+            user-friendly websites. I enjoy learning new technologies and
+            improving my skills every day.
+        </p>
+    </section>
+
+    <section id="skills" class="skills">
+        <h2>Skills</h2>
+        <ul>
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+            <li>Responsive Design</li>
+            <li>Git & GitHub</li>
+        </ul>
+    </section>
+
+    <section id="projects" class="projects">
+        <h2>Projects</h2>
+        <div class="projects-container">
+            <div class="project">
+                <h3>Portfolio Website</h3>
+                <p>A personal portfolio website built using HTML and CSS to showcase my work and skills.</p>
+            </div>
+            <div class="project">
+                <h3>Landing Page</h3>
+                <p>A responsive landing page for a fictional product designed to convert visitors into customers.</p>
+            </div>
+            <div class="project">
+                <h3>Web Application</h3>
+                <p>A dynamic web application built with JavaScript focusing on user interactivity.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2>Contact</h2>
+        <p>Feel free to reach out!</p>
+        <a href="mailto:email@example.com">Email Me</a>
+        <a href="#">LinkedIn</a>
+    </section>
+
+    <footer>
+        &copy; 2023 Junren N Abajar. All rights reserved.
+    </footer>
+
+    <script>
+        // From script.js — live clock
+        function showTime() {
+            const el = document.getElementById('currentTime');
+            if (el) el.innerHTML = new Date().toUTCString();
+        }
+        showTime();
+        setInterval(showTime, 1000);
+
+        // Lightbox
+        const img = document.getElementById('profileImg');
+        const overlay = document.getElementById('lightboxOverlay');
+
+        function toggleLightbox() {
+            img.classList.toggle('enlarged');
+            overlay.classList.toggle('active');
+        }
+
+        overlay.addEventListener('click', function () {
+            if (overlay.classList.contains('active')) {
+                toggleLightbox();
+            }
+        });
+    </script>
+
+</body>
+</html>
